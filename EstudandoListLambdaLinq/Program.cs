@@ -44,6 +44,9 @@ namespace EstudandoListLambdaLinq
 
             SalvarContasCorrentesAlteradas(CarregarContas());
             TesteCarlos();
+            SalvarContasCorrentesEmBinario(CarregarContas());
+            LeituraBinaria();
+            TesteGiovana();
 
             Console.ReadLine();
         }
@@ -81,7 +84,35 @@ namespace EstudandoListLambdaLinq
                     balde.Flush();// Despeja o buffer para o Stream!
                 }
             }
-            Console.WriteLine("Gravação terminou!");
+            Console.WriteLine("Gravação terminou! (SalvarContasCorrentesAlteradas)");
+        }
+
+        static void SalvarContasCorrentesEmBinario(ContaCorrente[] contas)
+        {
+            using (var stream = new FileStream(@"../../../arquivo_binario.txt", FileMode.Create))
+            using (var write = new BinaryWriter(stream))
+            {
+                foreach (var conta in contas)
+                {
+                    write.Write(conta.ToString());
+                    write.Flush();
+                }
+            }
+            Console.WriteLine("Gravação terminou! (SalvarContasCorrentesEmBinario)");
+        }
+
+        static void LeituraBinaria()
+        {
+            Console.WriteLine("Lendo arquivo binário");
+            using (var fs = new FileStream(@"../../../arquivo_binario.txt", FileMode.Open))
+            using (var br = new BinaryReader(fs, Encoding.UTF8))
+            {
+                var bs = br.BaseStream;
+                while (bs.Position < bs.Length)
+                {
+                    Console.WriteLine(br.ReadString());
+                }
+            }
         }
 
         static ContaCorrente ConverterStringParaContaCorrente(string linha)
@@ -127,7 +158,6 @@ namespace EstudandoListLambdaLinq
             //}
         }
 
-
         static void TesteCarlos()
         {
             var arquivoOriginal = new FileStream(@"../../../contas.txt", FileMode.Open);
@@ -154,6 +184,25 @@ namespace EstudandoListLambdaLinq
                 Console.WriteLine($"Erro ao gravar o rodapé --> {ex.Message}");
             }
             Console.WriteLine("Gravação terminou!");
+        }
+
+        static void TesteGiovana()
+        {
+            var numero = 691693903;
+
+            using (var fs = new FileStream(@"../../../BinaryWriter.txt", FileMode.Create))
+            using (var writer = new BinaryWriter(fs))
+            {
+                writer.Write(numero);
+                writer.Flush();
+            }
+
+            using (var fs = new FileStream(@"../../../StreamWriter.txt", FileMode.Create))
+            using (var writer = new StreamWriter(fs))
+            {
+                writer.Write(numero);
+                writer.Flush();
+            }
         }
     }
 }
