@@ -78,6 +78,7 @@ namespace EstudandoListLambdaLinq
                 foreach (var conta in contas)
                 {
                     balde.WriteLine(conta.ToString());
+                    balde.Flush();// Despeja o buffer para o Stream!
                 }
             }
             Console.WriteLine("Gravação terminou!");
