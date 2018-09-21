@@ -72,6 +72,10 @@ namespace EstudandoListLambdaLinq
             var textoFile2 = File.ReadAllBytes(@"../../../arquivo_binario.txt");
             Console.WriteLine("Carregando arquivo (File.ReadAllBytes)");
             Console.WriteLine(textoFile2);
+
+
+            Console.WriteLine("Criando arquivo (File.WriteAllText)");
+            File.WriteAllText(@"../../../File.WriteAllText.txt", "Escrevendo com File.WriteAllText");
         }
 
         static void UsandoStreamDeEntradaDaConsole()
