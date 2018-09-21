@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using ByteBankImportacaoExportacao.Entidades;
-using ByteBankImportacaoExportacao.Extensions;
+using System.IO;
+using System.Text;
 
 namespace EstudandoListLambdaLinq
 {
@@ -10,72 +8,75 @@ namespace EstudandoListLambdaLinq
     {
         static void Main(string[] args)
         {
-            //var lista = new Lista<ContaCorrente>();
-            //lista.AdicionarItem(new ContaCorrente(12345, 589632, new Correntista("Marcio de Almeida Rosa", "525.965.852-85")));
-            //lista.AdicionarItem(new ContaCorrente(58965, 745892, new Correntista("Renato Alvez dos Santos", "584.528.657-54")));
-            //lista.AdicionarItem(new ContaCorrente(85236, 576325, new Correntista("Romologlosvaldo Pafunço Filho", "753.396.149-52")));
-            //lista.AdicionarItem(new ContaCorrente(85236, 576325, new Correntista("Clara Maria Aparecida", "745.568.756-85")));
-            //lista.AdicionarItem(new ContaCorrente(12345, 589632, new Correntista("Caroline de Almeida Rosa", "854.225.856.88")));
-            //lista.AdicionarItem(
-            //    new ContaCorrente(47586, 852369, new Correntista("Rosicleide da Silva Santos", "745.654.852-95")),
-            //    new ContaCorrente(47586, 852369, new Correntista("Fernando da Silva Saulo", "758.365.854-65")),
-            //    new ContaCorrente(47586, 852369, new Correntista("Renato Aragão", "745.325.865-99"))
-            //);
-            //for (int i = 0; i < lista.TotalItem; i++)
-            //{
-            //    var contaCorrente = lista[i] as ContaCorrente;
-            //    if (contaCorrente != null)
-            //        Console.WriteLine($"Conta corrente do {lista[i].Correntista.Nome}, Agência: {lista[i].Agencia}, Conta corrente: {lista[i].Numero}");
-            //}
+            var caminhoArquivo = @"../../../contas.txt";
 
-            //var listaNumerica = new List<int>();
-            //listaNumerica.AddMany(1, 2, 3, 45, 9, 4, 5, 100, 8, 7,-1,0);
-            //listaNumerica.Sort();
-            //listaNumerica.ForEach(e => Console.WriteLine(e));
-
-            //Console.ReadLine();
-
-            //var listaNomes = new List<string>();
-            //listaNomes.AddMany("Mrcio", "Andre", "Renato");
-            //listaNomes.Sort();
-            //listaNomes.ForEach(e => Console.WriteLine(e));
-
-            //Console.ReadLine();
-
-            var lista = new List<ContaCorrente>();
-            lista.Add(new ContaCorrente(11111, 999999, new Correntista("Marcio de Almeida Rosa", "525.965.852-85")));
-            lista.Add(new ContaCorrente(22222, 888888, new Correntista("Renato Alvez dos Santos", "584.528.657-54")));
-            lista.Add(new ContaCorrente(33333, 777777, new Correntista("Romologlosvaldo Pafunço Filho", "753.396.149-52")));
-            lista.Add(new ContaCorrente(44444, 777777, new Correntista("Clara Maria Aparecida", "745.568.756-85")));
-            lista.Add(new ContaCorrente(55555, 666666, new Correntista("Caroline de Almeida Rosa", "854.225.856.88")));
-            lista.AddMany(
-                new ContaCorrente(66666, 555555, new Correntista("Rosicleide da Silva Santos", "745.654.852-95")),
-                new ContaCorrente(77777, 444444, new Correntista("Fernando da Silva Saulo", "758.365.854-65")),
-                new ContaCorrente(88888, 333333, new Correntista("Renato Aragão", "745.325.865-99")),
-                new ContaCorrente(1, 852369, new Correntista("Douglas Magrão", "753.951.852-51"))
-            );
-
-            lista.Sort(new ComparadorContaCorrentePorAgencia());
-
-            for (int i = 0; i < lista.Count; i++)
+            //Responsável por ler o arquivo e transformar em array de byte
+            using (var fluxoDoArquivo = new FileStream(caminhoArquivo, FileMode.Open))
             {
-                if (lista[i] is ContaCorrente contaCorrente)
-                    Console.WriteLine($"Conta corrente do {lista[i].Correntista.Nome}, Conta corrente: {lista[i].Numero} , Agência: {lista[i].Agencia}");
-            }
+                //o byte possui valor de 0 a 255, quando mapeado para caracter temos (256 possibilidades)
 
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("");
+                // Convertendo o byte em ASCII, temos 127 todo o alfabeto. Não contempla caracter com acentuação
+                // TABELA ASCII - cada byte representa 1 caracter
+                // https://upload.wikimedia.org/wikipedia/commons/1/1b/ASCII-Table-wide.svg
+
+                //Quando precisamos de mais de 255 valores códigos para representar outros caracteres, então será necessário no mínimo 2 bytes
+                //para conseguir chegar no caracter com acentuação pprecisamos converter a tabela que define o caracter ara a tabela do encode desejado
+
+                //para isso então nasceu a Unicode
+                //Organização que define quais são os códigos de cada caracter
+                //Os 127 primeiros códigos (Unicode) respeito os mesmo valores na (ASCII) pra manter a compatibilidade
+
+                //Exemplo --> õ representado por 0245 -> não será gravado 0245 no meu byte, este valor é o código do (Unicode)
+                //Cada caracter Unicode é um (Code point), esta informação será usada para transformar o (Unicode) - 
+                //   Formato de transformação unicode -->  Unicode Transformation Format --> acrônimo de = UTF
+                // Exemplos de UTF:
+                //  * UTF-7
+                //  * UTF-8
+                //  * UTF-16
+                //  * UTF-32
+                // Opções de UTF possíveis --> https://en.wikipedia.org/wiki/UTF
+
+                //Unicode e UTF-8
+                //https://www.ime.usp.br/~pf/algoritmos/aulas/unicode.html
+
+                //List of Unicode characters
+                //https://en.wikipedia.org/wiki/List_of_Unicode_characters
+                
+                //  \n  ---->  quebra de linha
 
 
-            var listaOrdenada = lista.OrderBy(l => l.Numero);
-            foreach (var item in listaOrdenada)
-            {
-                Console.WriteLine($"Conta corrente do {item.Correntista.Nome}, Conta corrente: {item.Numero} , Agência: {item.Agencia}");
+                //1024 //1 kb
+                //Criaando array de byte que servirá como "balde" para armazenar o conteúdo do arquivo que foi lido
+                var buffer = new byte[1024]; //1 kb
+
+                var numerosBytesLidos = -1;
+
+                while (numerosBytesLidos != 0)
+                {
+                    //recebe uma referência para armazenar o array de byte da leitura do arquivo "balde" -> parâmetro "array"
+                    //recebe um número do indice que será iniciado a gravação do array de byte do arquivo, você consegue deixar espaços vazio para alguma outra informação -> parâmetro offset
+                    //recebe a quantidade de bytes que deverá ser lido do array de byte do arquivo para ser atribuido no "balde" de array
+                    numerosBytesLidos = fluxoDoArquivo.Read(buffer, 0, 1024);
+
+                    EscreverBuffer(buffer);
+                }
             }
 
             Console.ReadLine();
+        }
+
+        static void EscreverBuffer(byte[] buffer)
+        {
+            var utf8 = new UTF8Encoding();
+
+            var texto = utf8.GetString(buffer);
+            Console.Write(texto);
+
+            //foreach (var meuByte in buffer)
+            //{
+            //    Console.Write(meuByte);
+            //    Console.Write(" ");
+            //}
         }
     }
 }
