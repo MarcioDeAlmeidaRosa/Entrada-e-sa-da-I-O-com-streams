@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ByteBankImportacaoExportacao.Entidades;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -38,18 +40,30 @@ namespace EstudandoListLambdaLinq
             //https://en.wikipedia.org/wiki/List_of_Unicode_characters
 
             //  \n  ---->  quebra de linha
+            var listaContaCorrente = new List<ContaCorrente>();
 
             var caminhoArquivo = @"../../../contas.txt";
             using (var arquivo = new FileStream(caminhoArquivo, FileMode.Open))
-            using (var balde = new StreamReader(arquivo))
+            using (var balde = new StreamReader(arquivo, Encoding.UTF8))
             {
                 while (!balde.EndOfStream)
                 {
-                    Console.WriteLine(balde.ReadLine());
+                    //Console.WriteLine(balde.ReadLine());
+                    listaContaCorrente.Add(ConverterStringParaContaCorrente(balde.ReadLine()));
                 }
             }
 
+            foreach (var conta in listaContaCorrente)
+            {
+                Console.WriteLine($"Correntista {conta.Correntista.Nome} portador do CPF {conta.Correntista.CPF}, da Ag: {conta.Agencia} e conta corrente: {conta.Numero} com saldo de R$ {conta.Saldo}");
+            }
             Console.ReadLine();
+        }
+
+        static ContaCorrente ConverterStringParaContaCorrente(string linha)
+        {
+            var dados = linha.Split(' ');
+            return new ContaCorrente(Convert.ToInt32(dados[1]), Convert.ToInt32(dados[0]), Convert.ToDouble(dados[2].Replace('.',',')), new Correntista(dados[4], dados[3]));
         }
 
         static void LidandoComFileStringDiretamento()
