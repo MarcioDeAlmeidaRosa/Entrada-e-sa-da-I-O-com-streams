@@ -47,8 +47,44 @@ namespace EstudandoListLambdaLinq
             SalvarContasCorrentesEmBinario(CarregarContas());
             LeituraBinaria();
             TesteGiovana();
+            UsandoStreamDeEntradaDaConsole();
+            LendoConteudoTotal();
 
             Console.ReadLine();
+        }
+
+        static void LendoConteudoTotal()
+        {
+            //Recomendado para arquivos não muito grande
+            var linhas = File.ReadAllLines(@"../../../contas.txt");
+            var listaContaCorrente = new List<ContaCorrente>();
+            foreach (var linha in linhas)
+            {
+                listaContaCorrente.Add(ConverterStringParaContaCorrente(linha));
+            } 
+            Console.WriteLine("Carregando arquivo (File.ReadAllLines)");
+            listaContaCorrente.ForEach(c => Console.WriteLine($"Correntista {c.Titular.Nome} portador do CPF {c.Titular.CPF}, da Ag: {c.Agencia} e conta corrente: {c.Numero} com saldo de R$ {c.Saldo}"));
+
+            var textoFile = File.ReadAllText(@"../../../contas.txt");
+            Console.WriteLine("Carregando arquivo (File.ReadAllText)");
+            Console.WriteLine(textoFile);
+
+            var textoFile2 = File.ReadAllBytes(@"../../../arquivo_binario.txt");
+            Console.WriteLine("Carregando arquivo (File.ReadAllBytes)");
+            Console.WriteLine(textoFile2);
+        }
+
+        static void UsandoStreamDeEntradaDaConsole()
+        {
+            using (var fluxoDeEntrada = Console.OpenStandardInput())
+            using (var fs = new FileStream(@"../../../dados_entrada_console.txt", FileMode.Create))
+            {
+                var buffer = new byte[1024]; //1kb
+                var bytesLidos = fluxoDeEntrada.Read(buffer, 0, 1024);
+                fs.Write(buffer, 0, bytesLidos);
+                fs.Flush();
+                Console.WriteLine($"Bytes lidos do console {bytesLidos}");
+            }
         }
 
         static ContaCorrente[] CarregarContas()
