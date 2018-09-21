@@ -55,14 +55,16 @@ namespace EstudandoListLambdaLinq
 
             foreach (var conta in listaContaCorrente)
             {
-                Console.WriteLine($"Correntista {conta.Correntista.Nome} portador do CPF {conta.Correntista.CPF}, da Ag: {conta.Agencia} e conta corrente: {conta.Numero} com saldo de R$ {conta.Saldo}");
+                Console.WriteLine($"Correntista {conta.Titular.Nome} portador do CPF {conta.Titular.CPF}, da Ag: {conta.Agencia} e conta corrente: {conta.Numero} com saldo de R$ {conta.Saldo}");
             }
             Console.ReadLine();
         }
 
         static ContaCorrente ConverterStringParaContaCorrente(string linha)
         {
-            var dados = linha.Split(' ');
+            //Acrônimo -> Comma-separated values -> CSV
+            //https://pt.wikipedia.org/wiki/Comma-separated_values
+            var dados = linha.Split(',');
             return new ContaCorrente(Convert.ToInt32(dados[1]), Convert.ToInt32(dados[0]), Convert.ToDouble(dados[2].Replace('.',',')), new Correntista(dados[4], dados[3]));
         }
 

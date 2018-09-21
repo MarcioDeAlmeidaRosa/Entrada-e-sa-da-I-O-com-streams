@@ -12,13 +12,13 @@ namespace ByteBankImportacaoExportacao.Entidades
 
         public double Saldo { get; private set; }
 
-        public Correntista Correntista { get; }
+        public Correntista Titular { get; }
 
         public ContaCorrente(int numero, int agencia, double saldo, Correntista correntista)
         {
             Numero = numero;
             Agencia = agencia;
-            Correntista = correntista;
+            Titular = correntista;
             Saldo = saldo;
         }
 
