@@ -43,6 +43,7 @@ namespace EstudandoListLambdaLinq
 
 
             SalvarContasCorrentesAlteradas(CarregarContas());
+            TesteCarlos();
 
             Console.ReadLine();
         }
@@ -123,6 +124,35 @@ namespace EstudandoListLambdaLinq
             //    Console.Write(meuByte);
             //    Console.Write(" ");
             //}
+        }
+
+
+        static void TesteCarlos()
+        {
+            var arquivoOriginal = new FileStream(@"../../../contas.txt", FileMode.Open);
+            var arquivoNovo = new FileStream(@"../../../teste_copia.txt", FileMode.Create);
+            var buffer = new byte[1024];
+
+            using (arquivoOriginal)
+            using (arquivoNovo)
+            {
+                var bytesLidos = -1;
+                while (bytesLidos != 0)
+                {
+                    bytesLidos = arquivoOriginal.Read(buffer, 0, 1024);
+                    arquivoNovo.Write(buffer, 0, bytesLidos);
+                }
+            }
+            try
+            {
+                var rodape = Encoding.UTF8.GetBytes("Este documento é uma cópia do original");
+                arquivoNovo.Write(rodape, 0, rodape.Length);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine($"Erro ao gravar o rodapé --> {ex.Message}");
+            }
+            Console.WriteLine("Gravação terminou!");
         }
     }
 }
