@@ -68,6 +68,11 @@ namespace ByteBankImportacaoExportacao.Entidades
                 return -1;
             return (Numero < uotraConta.Numero) ? -1 : Numero == uotraConta.Numero ? 0 : 1;
         }
+
+        public override string ToString()
+        {
+            return $"{Agencia},{Numero},{Saldo},{Titular.CPF},{Titular.Nome}";
+        }
     }
 
     public class ComparadorContaCorrentePorAgencia : IComparer<ContaCorrente>

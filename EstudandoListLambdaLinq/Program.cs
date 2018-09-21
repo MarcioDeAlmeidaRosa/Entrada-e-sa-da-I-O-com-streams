@@ -40,8 +40,16 @@ namespace EstudandoListLambdaLinq
             //https://en.wikipedia.org/wiki/List_of_Unicode_characters
 
             //  \n  ---->  quebra de linha
-            var listaContaCorrente = new List<ContaCorrente>();
 
+
+            SalvarContasCorrentesAlteradas(CarregarContas());
+
+            Console.ReadLine();
+        }
+
+        static ContaCorrente[] CarregarContas()
+        {
+            var listaContaCorrente = new List<ContaCorrente>();
             var caminhoArquivo = @"../../../contas.txt";
             using (var arquivo = new FileStream(caminhoArquivo, FileMode.Open))
             using (var balde = new StreamReader(arquivo, Encoding.UTF8))
@@ -52,12 +60,26 @@ namespace EstudandoListLambdaLinq
                     listaContaCorrente.Add(ConverterStringParaContaCorrente(balde.ReadLine()));
                 }
             }
+            Console.WriteLine("Carregando arquivo");
+            listaContaCorrente.ForEach(c => Console.WriteLine($"Correntista {c.Titular.Nome} portador do CPF {c.Titular.CPF}, da Ag: {c.Agencia} e conta corrente: {c.Numero} com saldo de R$ {c.Saldo}"));
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            return listaContaCorrente.ToArray();
+        }
 
-            foreach (var conta in listaContaCorrente)
+        static void SalvarContasCorrentesAlteradas(ContaCorrente[] contas)
+        {
+            var caminhoArquivo = @"../../../contas_exportadas.csv";
+            using (var fluxoArquivo = new FileStream(caminhoArquivo, FileMode.Create))
+            using (var balde = new StreamWriter(fluxoArquivo, Encoding.UTF8))
             {
-                Console.WriteLine($"Correntista {conta.Titular.Nome} portador do CPF {conta.Titular.CPF}, da Ag: {conta.Agencia} e conta corrente: {conta.Numero} com saldo de R$ {conta.Saldo}");
+                foreach (var conta in contas)
+                {
+                    balde.WriteLine(conta.ToString());
+                }
             }
-            Console.ReadLine();
+            Console.WriteLine("Gravação terminou!");
         }
 
         static ContaCorrente ConverterStringParaContaCorrente(string linha)
@@ -65,7 +87,7 @@ namespace EstudandoListLambdaLinq
             //Acrônimo -> Comma-separated values -> CSV
             //https://pt.wikipedia.org/wiki/Comma-separated_values
             var dados = linha.Split(',');
-            return new ContaCorrente(Convert.ToInt32(dados[1]), Convert.ToInt32(dados[0]), Convert.ToDouble(dados[2].Replace('.',',')), new Correntista(dados[4], dados[3]));
+            return new ContaCorrente(Convert.ToInt32(dados[1]), Convert.ToInt32(dados[0]), Convert.ToDouble(dados[2].Replace('.', ',')), new Correntista(dados[4], dados[3]));
         }
 
         static void LidandoComFileStringDiretamento()
